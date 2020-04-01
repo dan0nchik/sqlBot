@@ -9,7 +9,6 @@ updater = Updater(token='1139407419:AAEgdKd38btTS0VIkUVA-Yld968KHc_D4yk', use_co
 dispatcher = updater.dispatcher
 
 
-
 def start(update, context):
     user = update.message.from_user
     context.bot.send_message(chat_id=update.effective_chat.id, text=f"Привет, <b>{user.first_name}!</b>"
@@ -44,19 +43,45 @@ def sendBase(update, context):
 
 
 def startCreatingDB(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Ну что, создадим базу? Как она будет называться?")
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Ты всегда можешь отменить создание базы "
+                                                                    "командой /cancel. Готов? Пиши ок")
     return 1
 
 
-def column(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="А как будет называться колонка?")
+def getDBName(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id,
+                             text="Ну что, создадим базу? А как она будет называться?")
     return 2
 
 
+def column(update, context):
+    # print(update.message.text)
+    # context.user_data['name'] = update.message.text
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f"А как будет называться колонка? "
+                                                                    "(Она у нас будет одна, больше делать мне лень)")
+    return 3
+
+
 def columnType(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Какой тип будет у колонки?")
-    # update.message.reply_text("Ок, обрабатываю...")
-    return ConversationHandler.END, 3
+    # context.user_data['colName'] = update.message.text
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f"Неплохо, записал. "
+                                                                    f"Какой тип будет у колонки (INTEGER или TEXT)?")
+    return 4
+
+
+def createDBUserData(update, context):
+    # context.user_data['type'] = update.message.text
+    # context.bot.reply_text(chat_id=update.effective_chat.id, text=f"Тип готов - {user_data['type']}")
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Обрабатываю твою информацию...")
+    # connection = sqlite3.connect(os.getcwd() + r"\{}.db".format(context.user_data['name']))
+    # cursor = connection.cursor()
+    # cursor.execute(f"""CREATE TABLE {context.user_data['name']}
+    #                                 ({context.user_data['colName']} {context.user_data['type']});""")
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Создал! Отправляю...")
+    # context.bot.send_message(chat_id=update.effective_chat.id, document=open(r"{0}\{1}.db"
+    #                                                                          .format(os.getcwd(),
+    #                                                                                  context.user_data['name']), 'rb'))
+    return ConversationHandler.END
 
 
 def cancel(update, context):
@@ -109,9 +134,13 @@ if __name__ == '__main__':
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('create_db', startCreatingDB)],
         states={
+            1: [MessageHandler(Filters.text, getDBName)],
+
             2: [MessageHandler(Filters.text, column)],
 
-            3: [MessageHandler(Filters.text, columnType)]
+            3: [MessageHandler(Filters.text, columnType)],
+
+            4: [MessageHandler(Filters.text, createDBUserData)]
         },
 
         fallbacks=[CommandHandler('cancel', cancel)]
