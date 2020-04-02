@@ -4,6 +4,7 @@ import telegram
 import sqlite3
 from sqlite3 import Error
 import os
+from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
 
 updater = Updater(token='1139407419:AAEgdKd38btTS0VIkUVA-Yld968KHc_D4yk', use_context=True)
 dispatcher = updater.dispatcher
@@ -55,32 +56,35 @@ def getDBName(update, context):
 
 
 def column(update, context):
-    # print(update.message.text)
-    # context.user_data['name'] = update.message.text
+    context.user_data['name'] = update.message.text
     context.bot.send_message(chat_id=update.effective_chat.id, text=f"А как будет называться колонка? "
                                                                     "(Она у нас будет одна, больше делать мне лень)")
     return 3
 
 
 def columnType(update, context):
-    # context.user_data['colName'] = update.message.text
+    replies = [['INTEGER', 'TEXT']]
+    context.user_data['colName'] = update.message.text
     context.bot.send_message(chat_id=update.effective_chat.id, text=f"Неплохо, записал. "
-                                                                    f"Какой тип будет у колонки (INTEGER или TEXT)?")
+                                                                    f"Какой тип будет у колонки (INTEGER или TEXT)?",
+
+                             reply_markup=ReplyKeyboardMarkup(replies, one_time_keyboard=True))
     return 4
 
 
 def createDBUserData(update, context):
-    # context.user_data['type'] = update.message.text
-    # context.bot.reply_text(chat_id=update.effective_chat.id, text=f"Тип готов - {user_data['type']}")
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Обрабатываю твою информацию...")
-    # connection = sqlite3.connect(os.getcwd() + r"\{}.db".format(context.user_data['name']))
-    # cursor = connection.cursor()
-    # cursor.execute(f"""CREATE TABLE {context.user_data['name']}
-    #                                 ({context.user_data['colName']} {context.user_data['type']});""")
+    context.user_data['type'] = update.message.text
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Обрабатываю твою информацию...",
+                             reply_markup=ReplyKeyboardRemove())
+    connection = sqlite3.connect(os.getcwd() + r"\{}.db".format(context.user_data['name']))
+    cursor = connection.cursor()
+    cursor.execute(f"""CREATE TABLE {context.user_data['name']}
+                                 ({context.user_data['colName']} {context.user_data['type']});""")
     context.bot.send_message(chat_id=update.effective_chat.id, text="Создал! Отправляю...")
-    # context.bot.send_message(chat_id=update.effective_chat.id, document=open(r"{0}\{1}.db"
-    #                                                                          .format(os.getcwd(),
-    #                                                                                  context.user_data['name']), 'rb'))
+
+    context.bot.send_document(chat_id=update.effective_chat.id, document=
+    open(os.getcwd() + r"\{}.db".format(context.user_data['name']), 'rb'))
+
     return ConversationHandler.END
 
 
