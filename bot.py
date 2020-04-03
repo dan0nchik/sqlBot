@@ -4,9 +4,12 @@ import sqlite3
 from sqlite3 import Error
 import os
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
+from googlesearch import search
 
 updater = Updater(token='1139407419:AAEgdKd38btTS0VIkUVA-Yld968KHc_D4yk', use_context=True)
 dispatcher = updater.dispatcher
+
+COMMAND = range(0)
 
 
 def start(update, context):
@@ -24,46 +27,19 @@ def _help(update, context):
                               "/create_db - создам для тебя базу данных")
 
 
-def sql(update, context):
-    update.message.reply_text('<b><a href = "https://www.bitdegree.org/learn/sql-commands-list#andor">AND|OR</a></b>\n'
-                              '<b><a href = "https://www.bitdegree.org/learn/sql-commands-list#alter-table">ALTER TABLE</a></b>\n',
-                              parse_mode=telegram.ParseMode.HTML)
-    # "\n*[ALTER TABLE](https://www.bitdegree.org/learn/sql-commands-list#alter-table)*"
-    # "\n*[AS (alias)](https://www.bitdegree.org/learn/sql-commands-list#as-alias)*"
-    # "\n*[BETWEEN](https://www.bitdegree.org/learn/sql-commands-list#between)*"
-    # "\n*[CREATE DATABASE](https://www.bitdegree.org/learn/sql-commands-list#create-database)*"
-    # "\n*[CREATE TABLE](https://www.bitdegree.org/learn/sql-commands-list#create-table)*"
-    # "\n*[CREATE INDEX](https://www.bitdegree.org/learn/sql-commands-list#create-index)*"
-    # "\n*[CREATE VIEW](https://www.bitdegree.org/learn/sql-commands-list#create-view)*"
-    # "\n*[DELETE](https://www.bitdegree.org/learn/sql-commands-list#delete)*"
-    # "\n*[GRANT](https://www.bitdegree.org/learn/sql-commands-list#grant)*"
-    # "\n*[REVOKE](https://www.bitdegree.org/learn/sql-commands-list#revoke)*"
-    # "\n*[COMMIT](https://www.bitdegree.org/learn/sql-commands-list#commit)*"
-    # "\n*[ROLLBACK](https://www.bitdegree.org/learn/sql-commands-list#rollback)*"
-    # "\n*[SAVEPOINT](https://www.bitdegree.org/learn/sql-commands-list#savepoint)*"
-    # "\n*[DROP DATABASE](https://www.bitdegree.org/learn/sql-commands-list#drop-database)*"
-    # "\n*[DROP INDEX](https://www.bitdegree.org/learn/sql-commands-list#drop-index)*"
-    # "\n*[DROP TABLE](https://www.bitdegree.org/learn/sql-commands-list#drop-table)*"
-    # "\n*[EXISTS](https://www.bitdegree.org/learn/sql-commands-list#exists)*"
-    # "\n*[GROUP BY](https://www.bitdegree.org/learn/sql-commands-list#group-by)*"
-    # "\n*[HAVING](https://www.bitdegree.org/learn/sql-commands-list#having)*"
-    # "\n*[IN](https://www.bitdegree.org/learn/sql-commands-list#in)*"
-    # "\n*[INSERT INTO](https://www.bitdegree.org/learn/sql-commands-list#insert-into)*"
-    # "\n*[INNER JOIN](https://www.bitdegree.org/learn/sql-commands-list#inner-join)*"
-    # "\n*[LEFT JOIN](https://www.bitdegree.org/learn/sql-commands-list#left-join)*"
-    # "\n*[RIGHT JOIN](https://www.bitdegree.org/learn/sql-commands-list#right-join)*"
-    # "\n*[FULL JOIN](https://www.bitdegree.org/learn/sql-commands-list#full-join)*"
-    # "\n*[LIKE](https://www.bitdegree.org/learn/sql-commands-list#like)*"
-    # "\n*[ORDER BY](https://www.bitdegree.org/learn/sql-commands-list#order-by)*"
-    # "\n*[SELECT](https://www.bitdegree.org/learn/sql-commands-list#select)*"
-    # "\n*[SELECT DISTINCT](https://www.bitdegree.org/learn/sql-commands-list#select-distinct)*"
-    # "\n*[SELECT INTO](https://www.bitdegree.org/learn/sql-commands-list#select-into)*"
-    # "\n*[SELECT TOP](https://www.bitdegree.org/learn/sql-commands-list#select-top)*"
-    # "\n*[TRUNCATE TABLE](https://www.bitdegree.org/learn/sql-commands-list#truncate-table)*"
-    # "\n*[UNION](https://www.bitdegree.org/learn/sql-commands-list#union)*"
-    # "\n*[UNION ALL](https://www.bitdegree.org/learn/sql-commands-list#union-all)*"
-    # "\n*[UPDATE](https://www.bitdegree.org/learn/sql-commands-list#update)*"
-    # "\n*[WHERE](https://www.bitdegree.org/learn/sql-commands-list#where)*"
+def askSQLCommand(update, context):
+    update.message.reply_text("Введи команду SQLLite которая тебе нужна, и я пришлю тебе ссылку с ней.\n"
+                              "Например, alter table")
+    return COMMAND
+
+
+def sendLinkToSQLCommand(update, context):
+    context.user_data['command'] = update.message.text
+    update.message.reply_text("Подожди немного...")
+    query = f"sqlite {context.user_data['command']}"
+    for j in search(query, tld="co.in", num=10, stop=1, pause=2):
+        update.message.reply_text(f"Вроде нашёл\n {j}")
+    ConversationHandler.END
 
 
 def unknown(update, context):
@@ -152,10 +128,9 @@ if __name__ == '__main__':
     create_connection(file)
     dispatcher.add_handler(CommandHandler('start', start))
     dispatcher.add_handler(CommandHandler('help', _help))
-    dispatcher.add_handler(CommandHandler('sql', sql))
     dispatcher.add_handler(CommandHandler('add_nick', addNicks))
     dispatcher.add_handler(CommandHandler('get_db', sendBase))
-    conv_handler = ConversationHandler(
+    createDatabaseConvHandler = ConversationHandler(
         entry_points=[CommandHandler('create_db', startCreatingDB)],
         states={
             1: [MessageHandler(Filters.text, getDBName)],
@@ -168,7 +143,15 @@ if __name__ == '__main__':
         },
 
         fallbacks=[CommandHandler('stop', stop)])
-    dispatcher.add_handler(conv_handler)
+
+    searchSQLCommandsConvHandler = ConversationHandler(
+        entry_points=[CommandHandler('sql', askSQLCommand)],
+        states={
+            COMMAND: [MessageHandler(Filters.text, sendLinkToSQLCommand, pass_user_data=True)]
+        },
+        fallbacks=[CommandHandler('stop', stop)])
+    dispatcher.add_handler(searchSQLCommandsConvHandler)
+    dispatcher.add_handler(createDatabaseConvHandler)
     # после этого хэндлера команды в dispatcher добавлять нельзя
     dispatcher.add_handler(MessageHandler(Filters.command, unknown))
     updater.start_polling()
