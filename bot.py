@@ -9,8 +9,6 @@ from googlesearch import search
 updater = Updater(token='1139407419:AAEgdKd38btTS0VIkUVA-Yld968KHc_D4yk', use_context=True)
 dispatcher = updater.dispatcher
 
-COMMAND = range(0)
-
 
 def start(update, context):
     user = update.message.from_user
@@ -30,7 +28,7 @@ def _help(update, context):
 def askSQLCommand(update, context):
     update.message.reply_text("Введи команду SQLLite которая тебе нужна, и я пришлю тебе ссылку с ней.\n"
                               "Например, alter table")
-    return COMMAND
+    return 1
 
 
 def sendLinkToSQLCommand(update, context):
@@ -147,7 +145,7 @@ if __name__ == '__main__':
     searchSQLCommandsConvHandler = ConversationHandler(
         entry_points=[CommandHandler('sql', askSQLCommand)],
         states={
-            COMMAND: [MessageHandler(Filters.text, sendLinkToSQLCommand, pass_user_data=True)]
+            1: [MessageHandler(Filters.text, sendLinkToSQLCommand, pass_user_data=True)]
         },
         fallbacks=[CommandHandler('stop', stop)])
     dispatcher.add_handler(searchSQLCommandsConvHandler)
