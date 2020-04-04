@@ -22,7 +22,8 @@ def _help(update, context):
                               "/add_nick - добавлю твой никнейм в нашу базу "
                               "данных\n/get_db - отправлю "
                               "тебе базу данных никнеймов\n"
-                              "/create_db - создам для тебя базу данных")
+                              "/create_db - создам для тебя базу\n"
+                              "/insert - заполню твою таблицу")
 
 
 def askSQLCommand(update, context):
@@ -37,7 +38,7 @@ def sendLinkToSQLCommand(update, context):
     query = f"sqlite {context.user_data['command']}"
     for j in search(query, tld="co.in", num=10, stop=1, pause=2):
         update.message.reply_text(f"Вроде нашёл\n {j}")
-    ConversationHandler.END
+    return ConversationHandler.END
 
 
 def unknown(update, context):
@@ -76,19 +77,29 @@ def columnType(update, context):
 def createDBUserData(update, context):
     context.user_data['type'] = update.message.text
     update.message.reply_text("Обрабатываю твою информацию...", reply_markup=ReplyKeyboardRemove())
-    connection = sqlite3.connect(os.getcwd() + r"\{}.db".format(context.user_data['name']))
+    user = update.message.from_user
+    folder = user.username
+    if folder is None:
+        folder = user.last_name
+        if folder is None:
+            folder = user.first_name
+    try:
+        os.mkdir(os.getcwd() + r"\{}".format(folder))
+    except OSError as error:
+        print(error)
+    path = os.getcwd() + r"\{}".format(folder) + r"\{}.db".format(context.user_data['name'])
+    print(path)
+    connection = sqlite3.connect(path)
     cursor = connection.cursor()
     cursor.execute(f"""CREATE TABLE {context.user_data['name']}
                                  ({context.user_data['colName']} {context.user_data['type']});""")
     update.message.reply_text("Создал! Отправляю...")
 
-    context.bot.send_document(chat_id=update.effective_chat.id, document=
-    open(os.getcwd() + r"\{}.db".format(context.user_data['name']), 'rb'))
+    context.bot.send_document(chat_id=update.effective_chat.id, document=open(path, 'rb'))
     return ConversationHandler.END
 
 
 def stop(update, context):
-    update.message.reply_text('Пока, жалко базу не сделали :(')
     return ConversationHandler.END
 
 
@@ -121,6 +132,48 @@ def addNicks(update, context):
     update.message.reply_text("Добавлено! Больше эту команду можно не вызывать :)")
 
 
+def startFillingTable(update, context):
+    update.message.reply_text("Внимание! Если ты еще не сделал таблицу, нажми /stop и создай её командой /create_db."
+                              " В другом случае, в какую таблицу ты хочешь заполнить?")
+    user = update.message.from_user
+    folder = user.username
+    if folder is None:
+        folder = user.last_name
+        if folder is None:
+            folder = user.first_name
+    path = os.getcwd() + r"\{}".format(folder)
+    print(path)
+    tables = os.listdir(path)
+    print(tables)
+    update.message.reply_text(reply_markup=ReplyKeyboardMarkup(tables, one_time_keyboard=True))
+    return 1
+
+
+def getTableNameToFill(update, context):
+    context.user_data['table'] = update.message.text
+    update.message.reply_text("ОК, а какую колонку мы будем заполнять?")
+    user = update.message.from_user
+    folder = user.username
+    if folder is None:
+        folder = user.last_name
+        if folder is None:
+            folder = user.first_name
+    path = os.getcwd() + r"\{}".format(folder) + r"\{}".format(context.user_data['table'])
+    connection = sqlite3.connect(path)
+    cursor = connection.cursor()
+    cursor.execute("""PRAGMA table_info({});""".format(context.user_data['table']))
+    update.message.reply_text("")
+    return 2
+
+
+def getColumnNameToFill(update, context):
+    context.user_data['column'] = update.message.text
+    update.message.reply_text("OK, а какой тип будет у колонки?")
+    path = os.getcwd() + r"\{}".format() + r"\{}.db".format(context.user_data['name'])
+    connection = sqlite3.connect(path)
+    cursor = connection.cursor()
+
+
 if __name__ == '__main__':
     file = os.getcwd() + r"\users.db"
     create_connection(file)
@@ -148,6 +201,16 @@ if __name__ == '__main__':
             1: [MessageHandler(Filters.text, sendLinkToSQLCommand, pass_user_data=True)]
         },
         fallbacks=[CommandHandler('stop', stop)])
+
+    fillTableConvHandler = ConversationHandler(
+        entry_points=[CommandHandler('insert', startFillingTable)],
+        states={
+            1: [MessageHandler(Filters.text, getTableNameToFill, pass_user_data=True)],
+            2: [MessageHandler(Filters.text, getColumnNameToFill, pass_user_data=True)]
+        },
+        fallbacks=[CommandHandler('stop', stop)]
+    )
+    dispatcher.add_handler(fillTableConvHandler)
     dispatcher.add_handler(searchSQLCommandsConvHandler)
     dispatcher.add_handler(createDatabaseConvHandler)
     # после этого хэндлера команды в dispatcher добавлять нельзя

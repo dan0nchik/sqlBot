@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3c60b1b5-f7b6-44c1-a3c2-cd98732d7f9f" name="Default Changelist" comment="">
+    <list default="true" id="3c60b1b5-f7b6-44c1-a3c2-cd98732d7f9f" name="Default Changelist" comment="изменил COMMAND на цифры">
+      <change afterPath="$PROJECT_DIR$/Khromov/алабай.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Khromov/поп.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.google-cookie" beforeDir="false" afterPath="$PROJECT_DIR$/.google-cookie" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stop.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users.db" beforeDir="false" afterPath="$PROJECT_DIR$/users.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -168,7 +172,14 @@
       <option name="project" value="LOCAL" />
       <updated>1585941519377</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="изменил COMMAND на цифры">
+      <created>1585942467689</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1585942467689</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -206,7 +217,8 @@
     <MESSAGE value="HTML parse (робит)" />
     <MESSAGE value="HTML parse (робит) + почистил код, но не рабоатет stop()" />
     <MESSAGE value="гуглит команды" />
-    <option name="LAST_COMMIT_MESSAGE" value="гуглит команды" />
+    <MESSAGE value="изменил COMMAND на цифры" />
+    <option name="LAST_COMMIT_MESSAGE" value="изменил COMMAND на цифры" />
   </component>
   <component name="WindowStateProjectService">
     <state x="233" y="39" key="#Notifications" timestamp="1585573814578">
@@ -217,42 +229,58 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="96" y="35" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.760@0.0.1280.760" timestamp="1585937503362" />
-    <state x="294" y="0" key="CommitChangelistDialog2" timestamp="1585941518618">
+    <state x="294" y="0" key="CommitChangelistDialog2" timestamp="1586005530592">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="294" y="0" key="CommitChangelistDialog2/0.0.1280.760@0.0.1280.760" timestamp="1585941518618" />
+    <state x="294" y="0" key="CommitChangelistDialog2/0.0.1280.760@0.0.1280.760" timestamp="1586005530592" />
     <state x="422" y="136" key="FileChooserDialogImpl" timestamp="1585937500799">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="422" y="136" key="FileChooserDialogImpl/0.0.1280.760@0.0.1280.760" timestamp="1585937500799" />
-    <state width="1260" height="138" key="GridCell.Tab.0.bottom" timestamp="1585942398513">
+    <state width="1260" height="138" key="GridCell.Tab.0.bottom" timestamp="1586005509510">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1260" height="138" key="GridCell.Tab.0.bottom/0.0.1280.760@0.0.1280.760" timestamp="1585942398513" />
-    <state width="1260" height="138" key="GridCell.Tab.0.center" timestamp="1585942398512">
+    <state width="1260" height="138" key="GridCell.Tab.0.bottom/0.0.1280.760@0.0.1280.760" timestamp="1586005509510" />
+    <state width="1260" height="138" key="GridCell.Tab.0.center" timestamp="1586005509510">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1260" height="138" key="GridCell.Tab.0.center/0.0.1280.760@0.0.1280.760" timestamp="1585942398512" />
-    <state width="1260" height="138" key="GridCell.Tab.0.left" timestamp="1585942398512">
+    <state width="1260" height="138" key="GridCell.Tab.0.center/0.0.1280.760@0.0.1280.760" timestamp="1586005509510" />
+    <state width="1260" height="138" key="GridCell.Tab.0.left" timestamp="1586005509510">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1260" height="138" key="GridCell.Tab.0.left/0.0.1280.760@0.0.1280.760" timestamp="1585942398512" />
-    <state width="1260" height="138" key="GridCell.Tab.0.right" timestamp="1585942398512">
+    <state width="1260" height="138" key="GridCell.Tab.0.left/0.0.1280.760@0.0.1280.760" timestamp="1586005509510" />
+    <state width="1260" height="138" key="GridCell.Tab.0.right" timestamp="1586005509510">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1260" height="138" key="GridCell.Tab.0.right/0.0.1280.760@0.0.1280.760" timestamp="1585942398512" />
+    <state width="1260" height="138" key="GridCell.Tab.0.right/0.0.1280.760@0.0.1280.760" timestamp="1586005509510" />
+    <state width="1260" height="236" key="GridCell.Tab.1.bottom" timestamp="1586005460993">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state width="1260" height="236" key="GridCell.Tab.1.bottom/0.0.1280.760@0.0.1280.760" timestamp="1586005460993" />
+    <state width="1260" height="236" key="GridCell.Tab.1.center" timestamp="1586005460993">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state width="1260" height="236" key="GridCell.Tab.1.center/0.0.1280.760@0.0.1280.760" timestamp="1586005460993" />
+    <state width="1260" height="236" key="GridCell.Tab.1.left" timestamp="1586005460993">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state width="1260" height="236" key="GridCell.Tab.1.left/0.0.1280.760@0.0.1280.760" timestamp="1586005460993" />
+    <state width="1260" height="236" key="GridCell.Tab.1.right" timestamp="1586005460993">
+      <screen x="0" y="0" width="1280" height="760" />
+    </state>
+    <state width="1260" height="236" key="GridCell.Tab.1.right/0.0.1280.760@0.0.1280.760" timestamp="1586005460993" />
     <state x="142" y="23" key="SettingsEditor" timestamp="1585574182733">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="142" y="23" key="SettingsEditor/0.0.1280.760@0.0.1280.760" timestamp="1585574182733" />
-    <state x="233" y="113" key="Vcs.Push.Dialog.v2" timestamp="1585941521205">
+    <state x="233" y="113" key="Vcs.Push.Dialog.v2" timestamp="1585942470547">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="233" y="113" key="Vcs.Push.Dialog.v2/0.0.1280.760@0.0.1280.760" timestamp="1585941521205" />
-    <state x="336" y="205" key="com.intellij.ide.util.TipDialog" timestamp="1585942352015">
+    <state x="233" y="113" key="Vcs.Push.Dialog.v2/0.0.1280.760@0.0.1280.760" timestamp="1585942470547" />
+    <state x="336" y="205" key="com.intellij.ide.util.TipDialog" timestamp="1586005110030">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="336" y="205" key="com.intellij.ide.util.TipDialog/0.0.1280.760@0.0.1280.760" timestamp="1585942352015" />
+    <state x="336" y="205" key="com.intellij.ide.util.TipDialog/0.0.1280.760@0.0.1280.760" timestamp="1586005110030" />
     <state x="448" y="297" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1585574206870">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
