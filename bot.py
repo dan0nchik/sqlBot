@@ -89,13 +89,18 @@ def createDBUserData(update, context):
         except OSError as error:
             print(error)
 
+    print(f"Имя базы {context.user_data['name']}")
+    print(f"Имя колонки {context.user_data['colName']}")
+    print(f"Тип {context.user_data['type']}")
     path = os.getcwd() + r"\{}".format(folder) + r"\{}.db".format(context.user_data['name'])
     connection = sqlite3.connect(path)
     cursor = connection.cursor()
     cursor.execute(f"""CREATE TABLE {context.user_data['name']}
                                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
     {context.user_data['colName']} {context.user_data['type']});""")
-
+    print("Создана")
+    connection.commit()
+    connection.close()
     update.message.reply_text("Создал! Отправляю...")
 
     context.bot.send_document(chat_id=update.effective_chat.id, document=open(path, 'rb'))
@@ -117,8 +122,9 @@ def create_connection(file):
             cursor = connection.cursor()
             cursor.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='users'; ''')
             if cursor.fetchone()[0] == 1:
-                print("Table exists")
+                print("Таблица с никами существует")
             else:
+                print("Таблицы с никами пока нет")
                 cursor.execute("""CREATE TABLE users (name TEXT, surname TEXT, username TEXT PRIMARY KEY);""")
                 connection.commit()
                 connection.close()
@@ -165,18 +171,59 @@ def getTableNameToFill(update, context):
     cursor.execute("""SELECT * FROM {};"""
                    .format(context.user_data['table'][:-3]))
     names = [[list(map(lambda x: x[0], cursor.description))]]  # массив из колонок в таблице
-    print(names)
+    names[0][0].pop(0)  # удаляем id во избежание конфликтов
     update.message.reply_text("Вот колонки", reply_markup=ReplyKeyboardMarkup(names[0], one_time_keyboard=True))
     return 2
 
 
 def getColumnNameToFill(update, context):
+    update.message.reply_text("ОК, записал.", reply_markup=ReplyKeyboardRemove())
     context.user_data['column'] = update.message.text
-    update.message.reply_text("OK, ")
-    path = os.getcwd() + r"\{}".format() + r"\{}.db".format(context.user_data['name'])
+    user = update.message.from_user
+    folder = user.username
+    if folder is None:
+        folder = user.last_name
+        if folder is None:
+            folder = user.first_name
+    path = os.getcwd() + r"\{}".format(folder) + r"\{}".format(context.user_data['table'])
     connection = sqlite3.connect(path)
     cursor = connection.cursor()
-    cursor.execute()
+    cursor.execute(f"""PRAGMA TABLE_INFO ({context.user_data['table'][:-3]}) ;""")
+    rows = cursor.fetchall()
+    for row in rows:
+        if row[1] == context.user_data['column']:
+            colType = row[2]
+            break
+    context.user_data['type'] = colType
+    update.message.reply_text(f"Внимание!!! У этой колонки тип {colType}. Это значит, что ты можешь вводить "
+                              f"значения "
+                              f"ТОЛЬКО этого типа. Иначе все полетит!")
+    return 3
+
+
+def fillTableWithUserData(update, context):
+    context.user_data['value'] = update.message.text
+    update.message.reply_text("Отлично! Добавляю твои данные...")
+    user = update.message.from_user
+    folder = user.username
+    if folder is None:
+        folder = user.last_name
+        if folder is None:
+            folder = user.first_name
+    path = os.getcwd() + r"\{}".format(folder) + r"\{}".format(context.user_data['table'])
+    connection = sqlite3.connect(path)
+    cursor = connection.cursor()
+    if context.user_data['type'] == 'INTEGER':
+        cursor.execute(
+            f"""INSERT INTO {context.user_data['table'][:-3]} ({context.user_data['column']}) VALUES({context.user_data['value']});""")
+
+    if context.user_data['type'] == 'TEXT':  # тут кавычки добавляются так как TEXT
+        cursor.execute(
+            f"""INSERT INTO {context.user_data['table'][:-3]} ({context.user_data['column']}) VALUES ('{context.user_data['value']}');""")
+    connection.commit()
+    connection.close()
+    update.message.reply_text("Готово!")
+    return ConversationHandler.END
 
 
 if __name__ == '__main__':
@@ -211,7 +258,8 @@ if __name__ == '__main__':
         entry_points=[CommandHandler('insert', startFillingTable)],
         states={
             1: [MessageHandler(Filters.text, getTableNameToFill, pass_user_data=True)],
-            2: [MessageHandler(Filters.text, getColumnNameToFill, pass_user_data=True)]
+            2: [MessageHandler(Filters.text, getColumnNameToFill, pass_user_data=True)],
+            3: [MessageHandler(Filters.text, fillTableWithUserData, pass_user_data=True)]
         },
         fallbacks=[CommandHandler('stop', stop)]
     )
