@@ -98,9 +98,6 @@ def createDBUserData(update, context):
     cursor.execute(f"""CREATE TABLE {context.user_data['name']}
                                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
     {context.user_data['colName']} {context.user_data['type']});""")
-    print("Создана")
-    connection.commit()
-    connection.close()
     update.message.reply_text("Создал! Отправляю...")
 
     context.bot.send_document(chat_id=update.effective_chat.id, document=open(path, 'rb'))
