@@ -133,8 +133,6 @@ def addNicks(update, context):
 
 
 def startFillingTable(update, context):
-    update.message.reply_text("Внимание! Если ты еще не сделал таблицу, нажми /stop и создай её командой /create_db."
-                              " В другом случае, в какую таблицу ты хочешь заполнить?")
     user = update.message.from_user
     folder = user.username
     if folder is None:
@@ -142,10 +140,11 @@ def startFillingTable(update, context):
         if folder is None:
             folder = user.first_name
     path = os.getcwd() + r"\{}".format(folder)
-    print(path)
-    tables = os.listdir(path)
+    tables = [[os.listdir(path)]]
     print(tables)
-    update.message.reply_text(reply_markup=ReplyKeyboardMarkup(tables, one_time_keyboard=True))
+    update.message.reply_text("Внимание! Если ты еще не сделал таблицу, нажми /stop и создай её командой /create_db."
+                              " В другом случае, в какую таблицу ты хочешь заполнить?",
+                              reply_markup=ReplyKeyboardMarkup(tables[0], one_time_keyboard=True))
     return 1
 
 
