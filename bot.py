@@ -83,16 +83,19 @@ def createDBUserData(update, context):
         folder = user.last_name
         if folder is None:
             folder = user.first_name
-    try:
-        os.mkdir(os.getcwd() + r"\{}".format(folder))
-    except OSError as error:
-        print(error)
+    if not os.path.exists(folder):
+        try:
+            os.mkdir(os.getcwd() + r"\{}".format(folder))
+        except OSError as error:
+            print(error)
+
     path = os.getcwd() + r"\{}".format(folder) + r"\{}.db".format(context.user_data['name'])
-    print(path)
     connection = sqlite3.connect(path)
     cursor = connection.cursor()
     cursor.execute(f"""CREATE TABLE {context.user_data['name']}
-                                 ({context.user_data['colName']} {context.user_data['type']});""")
+                                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+    {context.user_data['colName']} {context.user_data['type']});""")
+
     update.message.reply_text("Создал! Отправляю...")
 
     context.bot.send_document(chat_id=update.effective_chat.id, document=open(path, 'rb'))
@@ -141,16 +144,15 @@ def startFillingTable(update, context):
             folder = user.first_name
     path = os.getcwd() + r"\{}".format(folder)
     tables = [[os.listdir(path)]]
-    print(tables)
     update.message.reply_text("Внимание! Если ты еще не сделал таблицу, нажми /stop и создай её командой /create_db."
-                              " В другом случае, в какую таблицу ты хочешь заполнить?",
+                              " В другом случае, какую таблицу ты хочешь заполнить?",
                               reply_markup=ReplyKeyboardMarkup(tables[0], one_time_keyboard=True))
     return 1
 
 
 def getTableNameToFill(update, context):
     context.user_data['table'] = update.message.text
-    update.message.reply_text("ОК, а какую колонку мы будем заполнять?")
+    update.message.reply_text("ОК, а какую колонку мы будем заполнять?", reply_markup=ReplyKeyboardRemove())
     user = update.message.from_user
     folder = user.username
     if folder is None:
@@ -160,17 +162,21 @@ def getTableNameToFill(update, context):
     path = os.getcwd() + r"\{}".format(folder) + r"\{}".format(context.user_data['table'])
     connection = sqlite3.connect(path)
     cursor = connection.cursor()
-    cursor.execute("""PRAGMA table_info({});""".format(context.user_data['table']))
-    update.message.reply_text("")
+    cursor.execute("""SELECT * FROM {};"""
+                   .format(context.user_data['table'][:-3]))
+    names = [[list(map(lambda x: x[0], cursor.description))]]  # массив из колонок в таблице
+    print(names)
+    update.message.reply_text("Вот колонки", reply_markup=ReplyKeyboardMarkup(names[0], one_time_keyboard=True))
     return 2
 
 
 def getColumnNameToFill(update, context):
     context.user_data['column'] = update.message.text
-    update.message.reply_text("OK, а какой тип будет у колонки?")
+    update.message.reply_text("OK, ")
     path = os.getcwd() + r"\{}".format() + r"\{}.db".format(context.user_data['name'])
     connection = sqlite3.connect(path)
     cursor = connection.cursor()
+    cursor.execute()
 
 
 if __name__ == '__main__':
