@@ -99,7 +99,7 @@ def createDBUserData(update, context):
                                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
     {context.user_data['colName']} {context.user_data['type']});""")
     update.message.reply_text("Создал! Отправляю...")
-
+  
     context.bot.send_document(chat_id=update.effective_chat.id, document=open(path, 'rb'))
     return ConversationHandler.END
 

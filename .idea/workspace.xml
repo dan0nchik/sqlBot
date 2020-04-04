@@ -2,18 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3c60b1b5-f7b6-44c1-a3c2-cd98732d7f9f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Khromov/Star Wars.db" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Khromov/ndndndb.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Khromov/bob.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Khromov/hi.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/perchatka13/Demv.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sbelaits/Я.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.google-cookie" beforeDir="false" afterPath="$PROJECT_DIR$/.google-cookie" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Khromov/hello.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Khromov/за.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Khromov/звёздные воины.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Khromov/звёздные войн.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Khromov/лох.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Khromov/оаоаьала.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Khromov/по" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users.db" beforeDir="false" afterPath="$PROJECT_DIR$/users.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -212,7 +208,14 @@
       <option name="project" value="LOCAL" />
       <updated>1586017469906</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="в прошлом коммите я намудрил с connection.commit, убрал это">
+      <created>1586018370094</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1586018370094</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -255,7 +258,8 @@
     <MESSAGE value="выводит доступные юзеру базы" />
     <MESSAGE value="выводит доступные таблицы и доступные колонки" />
     <MESSAGE value="работает заполнение таблиц" />
-    <option name="LAST_COMMIT_MESSAGE" value="работает заполнение таблиц" />
+    <MESSAGE value="в прошлом коммите я намудрил с connection.commit, убрал это" />
+    <option name="LAST_COMMIT_MESSAGE" value="в прошлом коммите я намудрил с connection.commit, убрал это" />
   </component>
   <component name="WindowStateProjectService">
     <state x="233" y="39" key="#Notifications" timestamp="1585573814578">
@@ -266,30 +270,30 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="96" y="35" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.760@0.0.1280.760" timestamp="1585937503362" />
-    <state x="294" y="0" key="CommitChangelistDialog2" timestamp="1586017469162">
+    <state x="294" y="0" key="CommitChangelistDialog2" timestamp="1586018367950">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="294" y="0" key="CommitChangelistDialog2/0.0.1280.760@0.0.1280.760" timestamp="1586017469162" />
+    <state x="294" y="0" key="CommitChangelistDialog2/0.0.1280.760@0.0.1280.760" timestamp="1586018367950" />
     <state x="422" y="136" key="FileChooserDialogImpl" timestamp="1585937500799">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="422" y="136" key="FileChooserDialogImpl/0.0.1280.760@0.0.1280.760" timestamp="1585937500799" />
-    <state width="1260" height="138" key="GridCell.Tab.0.bottom" timestamp="1586018281553">
+    <state width="1260" height="138" key="GridCell.Tab.0.bottom" timestamp="1586021902148">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1260" height="138" key="GridCell.Tab.0.bottom/0.0.1280.760@0.0.1280.760" timestamp="1586018281553" />
-    <state width="1260" height="138" key="GridCell.Tab.0.center" timestamp="1586018281552">
+    <state width="1260" height="138" key="GridCell.Tab.0.bottom/0.0.1280.760@0.0.1280.760" timestamp="1586021902148" />
+    <state width="1260" height="138" key="GridCell.Tab.0.center" timestamp="1586021902148">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1260" height="138" key="GridCell.Tab.0.center/0.0.1280.760@0.0.1280.760" timestamp="1586018281552" />
-    <state width="1260" height="138" key="GridCell.Tab.0.left" timestamp="1586018281552">
+    <state width="1260" height="138" key="GridCell.Tab.0.center/0.0.1280.760@0.0.1280.760" timestamp="1586021902148" />
+    <state width="1260" height="138" key="GridCell.Tab.0.left" timestamp="1586021902148">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1260" height="138" key="GridCell.Tab.0.left/0.0.1280.760@0.0.1280.760" timestamp="1586018281552" />
-    <state width="1260" height="138" key="GridCell.Tab.0.right" timestamp="1586018281552">
+    <state width="1260" height="138" key="GridCell.Tab.0.left/0.0.1280.760@0.0.1280.760" timestamp="1586021902148" />
+    <state width="1260" height="138" key="GridCell.Tab.0.right" timestamp="1586021902148">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state width="1260" height="138" key="GridCell.Tab.0.right/0.0.1280.760@0.0.1280.760" timestamp="1586018281552" />
+    <state width="1260" height="138" key="GridCell.Tab.0.right/0.0.1280.760@0.0.1280.760" timestamp="1586021902148" />
     <state width="1260" height="236" key="GridCell.Tab.1.bottom" timestamp="1586008582834">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
@@ -310,14 +314,14 @@
       <screen x="0" y="0" width="1280" height="760" />
     </state>
     <state x="142" y="23" key="SettingsEditor/0.0.1280.760@0.0.1280.760" timestamp="1585574182733" />
-    <state x="233" y="113" key="Vcs.Push.Dialog.v2" timestamp="1586017475270">
+    <state x="233" y="113" key="Vcs.Push.Dialog.v2" timestamp="1586018371698">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="233" y="113" key="Vcs.Push.Dialog.v2/0.0.1280.760@0.0.1280.760" timestamp="1586017475270" />
-    <state x="336" y="205" key="com.intellij.ide.util.TipDialog" timestamp="1586017780663">
+    <state x="233" y="113" key="Vcs.Push.Dialog.v2/0.0.1280.760@0.0.1280.760" timestamp="1586018371698" />
+    <state x="336" y="205" key="com.intellij.ide.util.TipDialog" timestamp="1586018403957">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
-    <state x="336" y="205" key="com.intellij.ide.util.TipDialog/0.0.1280.760@0.0.1280.760" timestamp="1586017780663" />
+    <state x="336" y="205" key="com.intellij.ide.util.TipDialog/0.0.1280.760@0.0.1280.760" timestamp="1586018403957" />
     <state x="448" y="297" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1585574206870">
       <screen x="0" y="0" width="1280" height="760" />
     </state>
