@@ -148,7 +148,7 @@ def startFillingTable(update, context):
     path = os.getcwd() + r"\{}".format(folder)
     tables = [[os.listdir(path)]]
     update.message.reply_text("Внимание! Если ты еще не сделал таблицу, нажми /stop и создай её командой /create_db."
-                              " В другом случае, какую таблицу ты хочешь заполнить?",
+                              " В другом случае, какую таблицу ты хочешь выбрать?",
                               reply_markup=ReplyKeyboardMarkup(tables[0], one_time_keyboard=True))
     return 1
 
@@ -222,6 +222,35 @@ def fillTableWithUserData(update, context):
     update.message.reply_text("Готово!")
     return ConversationHandler.END
 
+def newColumnName(update, context):
+    context.user_data['table'] = update.message.text
+    update.message.reply_text("А как будет называться колонка?", reply_markup=ReplyKeyboardRemove())
+    return 2
+
+def newColumnType(update, context):
+    replies = [['INTEGER', 'TEXT']]
+    context.user_data['colName'] = update.message.text
+    update.message.reply_text(f"Неплохо, записал. \n" f"Какой тип будет у колонки (INTEGER или TEXT)?",
+                              reply_markup=ReplyKeyboardMarkup(replies, one_time_keyboard=True))
+    return 3
+
+def alterTable(update, context):
+    context.user_data['type'] = update.message.text
+    update.message.reply_text("Обрабатываю твою информацию...", reply_markup=ReplyKeyboardRemove())
+    user = update.message.from_user
+    folder = user.username
+    if folder is None:
+        folder = user.last_name
+        if folder is None:
+            folder = user.first_name
+    path = os.getcwd() + r"\{}".format(folder) + r"\{}".format(context.user_data['table'])
+    connection = sqlite3.connect(path)
+    cursor = connection.cursor()
+    cursor.execute(f"""ALTER TABLE {context.user_data['table'][:-3]} ADD {context.user_data['colName']} {context.user_data['type']});""")
+    connection.commit()
+    connection.close()
+    update.message.reply_text("Готово!")
+    return ConversationHandler.END
 
 if __name__ == '__main__':
     file = os.getcwd() + r"\users.db"
@@ -258,8 +287,18 @@ if __name__ == '__main__':
             2: [MessageHandler(Filters.text, getColumnNameToFill, pass_user_data=True)],
             3: [MessageHandler(Filters.text, fillTableWithUserData, pass_user_data=True)]
         },
-        fallbacks=[CommandHandler('stop', stop)]
-    )
+        fallbacks=[CommandHandler('stop', stop)])
+
+    alterTableConvHandler = ConversationHandler(
+        entry_points=[CommandHandler('add_column', startFillingTable)],
+        states={
+            1: [MessageHandler(Filters.text, newColumnName, pass_user_data=True)],
+            2: [MessageHandler(Filters.text, newColumnType, pass_user_data=True)],
+            3: [MessageHandler(Filters.text, alterTable, pass_user_data=True)]
+        },
+        fallbacks=[CommandHandler('stop', stop)])
+
+    dispatcher.add_handler(alterTableConvHandler)
     dispatcher.add_handler(fillTableConvHandler)
     dispatcher.add_handler(searchSQLCommandsConvHandler)
     dispatcher.add_handler(createDatabaseConvHandler)
