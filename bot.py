@@ -214,7 +214,7 @@ def fillTableWithUserData(update, context):
     if context.user_data['type'] == 'TEXT':  # тут кавычки добавляются так как TEXT
         cursor.execute(
             f"""INSERT INTO {context.user_data['table'][:-3]} ({context.user_data['column']}) VALUES ('{context.user_data['value']}');""")
-    connection.commit()
+        connection.commit()
     context.bot.send_document(chat_id=update.effective_chat.id, document=open(path, 'rb'))
     update.message.reply_text("Готово!")
     return ConversationHandler.END
