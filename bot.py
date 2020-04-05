@@ -1,3 +1,4 @@
+#  Copyright (c) 2020. Daniel Khromov & Arseniy Antonov
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
 import telegram
 import sqlite3
@@ -12,7 +13,7 @@ dispatcher = updater.dispatcher
 
 def start(update, context):
     user = update.message.from_user
-    update.message.reply_text(f"Привет, <b>{user.first_name}!</b>"f" Напиши /help чтобы узнать, что я могу",
+    update.message.reply_text(f"Бип Боп. Привет, <b>{user.first_name}!</b>"f" Напиши /help чтобы узнать, что я могу",
                               parse_mode=telegram.ParseMode.HTML)
 
 
@@ -23,7 +24,8 @@ def _help(update, context):
                               "данных\n/get_db - отправлю "
                               "тебе базу данных никнеймов\n"
                               "/create_db - создам для тебя базу\n"
-                              "/insert - заполню твою таблицу")
+                              "/insert - заполню твою таблицу\n"
+                              "/add_column - добавлю колонку в таблицу\n")
 
 
 def askSQLCommand(update, context):
@@ -51,7 +53,7 @@ def sendBase(update, context):
 
 
 def startCreatingDB(update, context):
-    update.message.reply_text("Ты всегда можешь отменить создание базы командой /stop. Готов? Пиши ок")
+    update.message.reply_text("Ты всегда можешь отменить создание базы командой /cancel. Готов? Пиши ок")
     return 1
 
 
@@ -70,7 +72,7 @@ def columnType(update, context):
     replies = [['INTEGER', 'TEXT']]
     context.user_data['colName'] = update.message.text
     update.message.reply_text(f"Неплохо, записал. \n" f"Какой тип будет у колонки (INTEGER или TEXT)?",
-                              reply_markup=ReplyKeyboardMarkup(replies, one_time_keyboard=True))
+                              reply_markup=ReplyKeyboardMarkup(replies, one_time_keyboard=True, resize_keyboard=True))
     return 4
 
 
@@ -98,13 +100,15 @@ def createDBUserData(update, context):
     cursor.execute(f"""CREATE TABLE {context.user_data['name']}
                                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
     {context.user_data['colName']} {context.user_data['type']});""")
+    connection.commit()
+    connection.close()
     update.message.reply_text("Создал! Отправляю...")
-  
     context.bot.send_document(chat_id=update.effective_chat.id, document=open(path, 'rb'))
     return ConversationHandler.END
 
 
-def stop(update, context):
+def cancel(update, context):
+    update.message.reply_text("Бип Бип, прерываю диалог. Пиши /help для других команд")
     return ConversationHandler.END
 
 
@@ -123,8 +127,6 @@ def create_connection(file):
             else:
                 print("Таблицы с никами пока нет")
                 cursor.execute("""CREATE TABLE users (name TEXT, surname TEXT, username TEXT PRIMARY KEY);""")
-                connection.commit()
-                connection.close()
 
 
 def addNicks(update, context):
@@ -134,7 +136,6 @@ def addNicks(update, context):
     cursor.execute("""INSERT INTO users (name, surname, username) VALUES 
     ('{0}', '{1}', '{2}');""".format(user.first_name, user.last_name, user.username))
     connection.commit()
-    connection.close()
     update.message.reply_text("Добавлено! Больше эту команду можно не вызывать :)")
 
 
@@ -147,9 +148,9 @@ def startFillingTable(update, context):
             folder = user.first_name
     path = os.getcwd() + r"\{}".format(folder)
     tables = [[os.listdir(path)]]
-    update.message.reply_text("Внимание! Если ты еще не сделал таблицу, нажми /stop и создай её командой /create_db."
+    update.message.reply_text("Внимание! Если ты еще не сделал таблицу, нажми /cancel и создай её командой /create_db."
                               " В другом случае, какую таблицу ты хочешь выбрать?",
-                              reply_markup=ReplyKeyboardMarkup(tables[0], one_time_keyboard=True))
+                              reply_markup=ReplyKeyboardMarkup(tables[0], one_time_keyboard=True, resize_keyboard=True))
     return 1
 
 
@@ -213,19 +214,22 @@ def fillTableWithUserData(update, context):
     if context.user_data['type'] == 'INTEGER':
         cursor.execute(
             f"""INSERT INTO {context.user_data['table'][:-3]} ({context.user_data['column']}) VALUES({context.user_data['value']});""")
+        connection.commit()
 
     if context.user_data['type'] == 'TEXT':  # тут кавычки добавляются так как TEXT
         cursor.execute(
             f"""INSERT INTO {context.user_data['table'][:-3]} ({context.user_data['column']}) VALUES ('{context.user_data['value']}');""")
     connection.commit()
-    connection.close()
+    context.bot.send_document(chat_id=update.effective_chat.id, document=open(path, 'rb'))
     update.message.reply_text("Готово!")
     return ConversationHandler.END
+
 
 def newColumnName(update, context):
     context.user_data['table'] = update.message.text
     update.message.reply_text("А как будет называться колонка?", reply_markup=ReplyKeyboardRemove())
     return 2
+
 
 def newColumnType(update, context):
     replies = [['INTEGER', 'TEXT']]
@@ -233,6 +237,7 @@ def newColumnType(update, context):
     update.message.reply_text(f"Неплохо, записал. \n" f"Какой тип будет у колонки (INTEGER или TEXT)?",
                               reply_markup=ReplyKeyboardMarkup(replies, one_time_keyboard=True))
     return 3
+
 
 def alterTable(update, context):
     context.user_data['type'] = update.message.text
@@ -246,11 +251,14 @@ def alterTable(update, context):
     path = os.getcwd() + r"\{}".format(folder) + r"\{}".format(context.user_data['table'])
     connection = sqlite3.connect(path)
     cursor = connection.cursor()
-    cursor.execute(f"""ALTER TABLE {context.user_data['table'][:-3]} ADD {context.user_data['colName']} {context.user_data['type']});""")
+
+    cursor.execute(
+        f"""ALTER TABLE {context.user_data['table'][:-3]} ADD {context.user_data['colName']} {context.user_data['type']};""")
     connection.commit()
-    connection.close()
     update.message.reply_text("Готово!")
+    context.bot.send_document(chat_id=update.effective_chat.id, document=open(path, 'rb'))
     return ConversationHandler.END
+
 
 if __name__ == '__main__':
     file = os.getcwd() + r"\users.db"
@@ -259,6 +267,7 @@ if __name__ == '__main__':
     dispatcher.add_handler(CommandHandler('help', _help))
     dispatcher.add_handler(CommandHandler('add_nick', addNicks))
     dispatcher.add_handler(CommandHandler('get_db', sendBase))
+    # dispatcher.add_handler(CommandHandler('stop', stop))
     createDatabaseConvHandler = ConversationHandler(
         entry_points=[CommandHandler('create_db', startCreatingDB)],
         states={
@@ -270,16 +279,14 @@ if __name__ == '__main__':
 
             4: [MessageHandler(Filters.text, createDBUserData, pass_user_data=True)]
         },
-
-        fallbacks=[CommandHandler('stop', stop)])
+        fallbacks=[CommandHandler('cancel', cancel)])
 
     searchSQLCommandsConvHandler = ConversationHandler(
         entry_points=[CommandHandler('sql', askSQLCommand)],
         states={
             1: [MessageHandler(Filters.text, sendLinkToSQLCommand, pass_user_data=True)]
         },
-        fallbacks=[CommandHandler('stop', stop)])
-
+        fallbacks=[CommandHandler('cancel', cancel)])
     fillTableConvHandler = ConversationHandler(
         entry_points=[CommandHandler('insert', startFillingTable)],
         states={
@@ -287,7 +294,7 @@ if __name__ == '__main__':
             2: [MessageHandler(Filters.text, getColumnNameToFill, pass_user_data=True)],
             3: [MessageHandler(Filters.text, fillTableWithUserData, pass_user_data=True)]
         },
-        fallbacks=[CommandHandler('stop', stop)])
+        fallbacks=[CommandHandler('cancel', cancel)])  # CommandHandler('cancel', cancel)
 
     alterTableConvHandler = ConversationHandler(
         entry_points=[CommandHandler('add_column', startFillingTable)],
@@ -296,7 +303,7 @@ if __name__ == '__main__':
             2: [MessageHandler(Filters.text, newColumnType, pass_user_data=True)],
             3: [MessageHandler(Filters.text, alterTable, pass_user_data=True)]
         },
-        fallbacks=[CommandHandler('stop', stop)])
+        fallbacks=[CommandHandler('cancel', cancel)])  # CommandHandler('cancel', cancel)
 
     dispatcher.add_handler(alterTableConvHandler)
     dispatcher.add_handler(fillTableConvHandler)
