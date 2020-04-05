@@ -107,11 +107,6 @@ def createDBUserData(update, context):
     return ConversationHandler.END
 
 
-def cancel(update, context):
-    update.message.reply_text("Бип Бип, прерываю диалог. Пиши /help для других команд")
-    return ConversationHandler.END
-
-
 def create_connection(file):
     connection = None
     try:
@@ -260,6 +255,12 @@ def alterTable(update, context):
     return ConversationHandler.END
 
 
+def cancel(update, context):
+    print("cancel")
+    update.message.reply_text("Бип Бип, прерываю диалог. Пиши /help для других команд")
+    return ConversationHandler.END
+
+
 if __name__ == '__main__':
     file = os.getcwd() + r"\users.db"
     create_connection(file)
@@ -267,7 +268,6 @@ if __name__ == '__main__':
     dispatcher.add_handler(CommandHandler('help', _help))
     dispatcher.add_handler(CommandHandler('add_nick', addNicks))
     dispatcher.add_handler(CommandHandler('get_db', sendBase))
-    # dispatcher.add_handler(CommandHandler('stop', stop))
     createDatabaseConvHandler = ConversationHandler(
         entry_points=[CommandHandler('create_db', startCreatingDB)],
         states={
@@ -279,14 +279,14 @@ if __name__ == '__main__':
 
             4: [MessageHandler(Filters.text, createDBUserData, pass_user_data=True)]
         },
-        fallbacks=[CommandHandler('cancel', cancel)])
+        fallbacks=[])
 
     searchSQLCommandsConvHandler = ConversationHandler(
         entry_points=[CommandHandler('sql', askSQLCommand)],
         states={
             1: [MessageHandler(Filters.text, sendLinkToSQLCommand, pass_user_data=True)]
         },
-        fallbacks=[CommandHandler('cancel', cancel)])
+        fallbacks=[])
     fillTableConvHandler = ConversationHandler(
         entry_points=[CommandHandler('insert', startFillingTable)],
         states={
@@ -294,7 +294,7 @@ if __name__ == '__main__':
             2: [MessageHandler(Filters.text, getColumnNameToFill, pass_user_data=True)],
             3: [MessageHandler(Filters.text, fillTableWithUserData, pass_user_data=True)]
         },
-        fallbacks=[CommandHandler('cancel', cancel)])  # CommandHandler('cancel', cancel)
+        fallbacks=[])  # CommandHandler('cancel', cancel)
 
     alterTableConvHandler = ConversationHandler(
         entry_points=[CommandHandler('add_column', startFillingTable)],
@@ -303,8 +303,8 @@ if __name__ == '__main__':
             2: [MessageHandler(Filters.text, newColumnType, pass_user_data=True)],
             3: [MessageHandler(Filters.text, alterTable, pass_user_data=True)]
         },
-        fallbacks=[CommandHandler('cancel', cancel)])  # CommandHandler('cancel', cancel)
-
+        fallbacks=[])  # CommandHandler('cancel', cancel)
+    dispatcher.add_handler(CommandHandler('cancel', cancel), group=33)
     dispatcher.add_handler(alterTableConvHandler)
     dispatcher.add_handler(fillTableConvHandler)
     dispatcher.add_handler(searchSQLCommandsConvHandler)
