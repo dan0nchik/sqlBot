@@ -20,9 +20,6 @@ def start(update, context):
 def _help(update, context):
     update.message.reply_text("Вот мои команды: ""\n/sql - я выведу тебе самые популярные запросы "
                               "языка SQL:\n"
-                              "/add_nick - добавлю твой никнейм в нашу базу "
-                              "данных\n/get_db - отправлю "
-                              "тебе базу данных никнеймов\n"
                               "/create_db - создам для тебя базу\n"
                               "/insert - заполню твою таблицу\n"
                               "/add_column - добавлю колонку в таблицу\n")
@@ -47,13 +44,8 @@ def unknown(update, context):
     update.message.reply_text("Извини, я тебя не понял :(")
 
 
-def sendBase(update, context):
-    update.message.reply_text("Тссс, это секретная информация...")
-    context.bot.send_document(chat_id=update.effective_chat.id, document=open(r"{}\users.db".format(os.getcwd()), 'rb'))
-
-
 def startCreatingDB(update, context):
-    update.message.reply_text("Ты всегда можешь отменить создание базы командой /cancel. Готов? Пиши ок")
+    update.message.reply_text("Готов? Пиши ок")
     return 1
 
 
@@ -124,16 +116,6 @@ def create_connection(file):
                 cursor.execute("""CREATE TABLE users (name TEXT, surname TEXT, username TEXT PRIMARY KEY);""")
 
 
-def addNicks(update, context):
-    user = update.message.from_user
-    connection = sqlite3.connect(file)
-    cursor = connection.cursor()
-    cursor.execute("""INSERT INTO users (name, surname, username) VALUES 
-    ('{0}', '{1}', '{2}');""".format(user.first_name, user.last_name, user.username))
-    connection.commit()
-    update.message.reply_text("Добавлено! Больше эту команду можно не вызывать :)")
-
-
 def startFillingTable(update, context):
     user = update.message.from_user
     folder = user.username
@@ -143,7 +125,7 @@ def startFillingTable(update, context):
             folder = user.first_name
     path = os.getcwd() + r"\{}".format(folder)
     tables = [[os.listdir(path)]]
-    update.message.reply_text("Внимание! Если ты еще не сделал таблицу, нажми /cancel и создай её командой /create_db."
+    update.message.reply_text("Внимание! Если ты еще не создал таблицы - тебе придется остановить меня :("
                               " В другом случае, какую таблицу ты хочешь выбрать?",
                               reply_markup=ReplyKeyboardMarkup(tables[0], one_time_keyboard=True, resize_keyboard=True))
     return 1
@@ -266,8 +248,6 @@ if __name__ == '__main__':
     create_connection(file)
     dispatcher.add_handler(CommandHandler('start', start))
     dispatcher.add_handler(CommandHandler('help', _help))
-    dispatcher.add_handler(CommandHandler('add_nick', addNicks))
-    dispatcher.add_handler(CommandHandler('get_db', sendBase))
     createDatabaseConvHandler = ConversationHandler(
         entry_points=[CommandHandler('create_db', startCreatingDB)],
         states={
