@@ -6,6 +6,10 @@ from sqlite3 import Error
 import os
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
 from googlesearch import search
+import keep_alive
+
+keep_alive.keep_alive()
+
 
 updater = Updater(token='1139407419:AAEgdKd38btTS0VIkUVA-Yld968KHc_D4yk', use_context=True)
 dispatcher = updater.dispatcher
