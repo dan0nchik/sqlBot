@@ -1,0 +1,8 @@
+README.md
+setup.py
+sqlbot.py
+sqlbot.egg-info/PKG-INFO
+sqlbot.egg-info/SOURCES.txt
+sqlbot.egg-info/dependency_links.txt
+sqlbot.egg-info/requires.txt
+sqlbot.egg-info/top_level.txt

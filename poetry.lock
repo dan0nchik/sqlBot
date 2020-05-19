@@ -94,8 +94,8 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "1.0.1"
 
 [metadata]
-content-hash = "f92346f3347b95a0efb5b8e985e51cf41de342db623a5869243288317dcab9fe"
-python-versions = "^3.8"
+content-hash = "d0a1065d3fd76046f0a4d374d5e9faa83ebb3608ad9acef4b2b420a38281cc1b"
+python-versions = "^3.7"
 
 [metadata.hashes]
 beautifulsoup4 = ["594ca51a10d2b3443cbac41214e12dbb2a1cd57e1a7344659849e2e20ba6a8d8", "a4bbe77fd30670455c5296242967a123ec28c37e9702a8a81bd2f20a4baf0368", "d4e96ac9b0c3a6d3f0caae2e4124e6055c5dcafde8e2f831ff194c104f0775a0"]
